@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whats_app_page/common/colors.dart';
+import 'package:whats_app_page/dummydata/chat.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -8,8 +9,22 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   TextEditingController textcontroller = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -108,60 +123,241 @@ class _HomeViewState extends State<HomeView> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              // TextField with search icon and hint text
-              TextField(
-                controller: textcontroller,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: const Icon(
-                      Icons.search), // Search icon inside the TextField
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        body: Column(
+          children: [
+            // TextField with search icon and hint text
+            TextField(
+              controller: textcontroller,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                prefixIcon: const Icon(
+                    Icons.search), // Search icon inside the TextField
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              ),
+            ),
+        
+            const SizedBox(
+              height: 15,
+            ),
+        
+            SingleChildScrollView(
+              child: Row(
+                children: [
+                  _buildcategories('All', isSelected: true, isGreen: true),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  _buildcategories('Unread'),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  _buildcategories('favourites'),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  _buildcategories('Groups +32'),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  _buildcategories('+'),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.grey[700], shape: BoxShape.circle),
+                child: const Icon(
+                  Icons.archive,
+                  size: 20,
                 ),
               ),
-
-              const SizedBox(
-                height: 15,
+              title: const Text(
+                "23",
+                style: TextStyle(color: Colors.grey),
               ),
+            ),
+            const Divider(
+              height: 1,
+            ),
+            Expanded(child: ListView.builder(itemCount: chat.users.length,itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.green[700],
+                      child: index == 0
+                          ? const Icon(Icons.group, color: Colors.white70)
+                          : null,
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            chat.users[index].name,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Text(
+                          chat.users[index].time,
+                          style: const TextStyle(
+                              fontSize: 12, color: IColors.grey),
+                        )
+                      ],
+                    ),
+                    subtitle: Row(
+                      children: [
+                        if (index < 2)
+                          const Text(
+                            "tick",
+                            style: TextStyle(color: IColors.grey),
+                          ),
+                        Expanded(
+                            child: Text(
+                          chat.users[index].message,
+                          style: TextStyle(color: IColors.grey),
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                        if (chat.users[index].isPinned)
+                          const RotatedBox(
+                            quarterTurns: 1,
+                            child: Icon(
+                              Icons.push_pin,
+                              size: 16,
+                              color: IColors.grey,
+                            ),
+                          ),
+                   if(chat.users[index].unreadCount>0)
+                   Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(color: Color(0xFF00A884),
+                    shape: BoxShape.circle),
+                    child: Text("${chat.users[index].unreadCount}",style: const TextStyle(fontSize: 12,color:IColors.white),),
+                   )
+                      ],
+                    ),
 
-              SingleChildScrollView(
+                    
+                  ),
+                  const Divider(height: 1, indent: 80),
+                ],
+              );
+            })),
+                       Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.grey[800]!, width: 1),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildcategories('All', isSelected: true, isGreen: true),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    _buildcategories('Unread'),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    _buildcategories('favourites'),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    _buildcategories('Groups +32'),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    _buildcategories('+'),
+                    _buildNavItem(Icons.chat, "Chats", true, hasNotification: true),
+                    _buildNavItem(Icons.circle_outlined, "Updates", false, hasUpdateDot: true),
+                    _buildNavItem(Icons.people, "Communities", false),
+                    _buildNavItem(Icons.call, "Calls", false),
                   ],
-                ),),
-            
-    
-      
-              
-            ],
-          ),
+                ),
+              ),
+            ),
+          ],
+        ),
+    ));
+     
+  }
+
+
+   Widget _buildFilterChip(String label, {bool isSelected = false, bool isGreen = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: isSelected 
+            ? (isGreen ? const Color(0xFF00A884) : Colors.grey[700]) 
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.grey,
         ),
       ),
     );
   }
+
+  Widget _buildNavItem(IconData icon, String label, bool isActive, {bool hasNotification = false, bool hasUpdateDot = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Stack(
+          children: [
+            Icon(
+              icon,
+              color: isActive ? Colors.white : Colors.grey,
+            ),
+            if (hasNotification)
+              Positioned(
+                right: -5,
+                top: -5,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF00A884),
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 14,
+                    minHeight: 14,
+                  ),
+                  child: const Text(
+                    "99+",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            if (hasUpdateDot)
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF00A884),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: isActive ? Colors.white : Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+
+
 
   Widget _buildcategories(String data,
       {bool isSelected = false, bool isGreen = false}) {
@@ -179,5 +375,6 @@ class _HomeViewState extends State<HomeView> {
         style: TextStyle(color: isSelected ? IColors.lightGreen : IColors.grey),
       ),
     );
+
   }
 }
