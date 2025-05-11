@@ -40,7 +40,7 @@ class chat {
     ),
     User(
       name: "FAMILY GROUP",
-      message: "GOOD EVENING",
+      message: "Dad : Good evening",
       time: "4.30 PM",
       isPinned: false,
       unreadCount: 34,

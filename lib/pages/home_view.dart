@@ -129,7 +129,7 @@ class _HomeViewState extends State<HomeView>
             TextField(
               controller: textcontroller,
               decoration: InputDecoration(
-                hintText: 'Search...',
+                hintText: 'Search...',hintStyle: TextStyle(color: IColors.grey),
                 prefixIcon: const Icon(
                     Icons.search), // Search icon inside the TextField
                 border: OutlineInputBorder(
@@ -150,7 +150,7 @@ class _HomeViewState extends State<HomeView>
                   const SizedBox(
                     width: 8,
                   ),
-                  _buildcategories('Unread'),
+                  _buildcategories('Unread',isSelected: false,isGreen: false),
                   const SizedBox(
                     width: 8,
                   ),
@@ -169,25 +169,26 @@ class _HomeViewState extends State<HomeView>
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    color: Colors.grey[700], shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                    color: Colors.black, shape: BoxShape.circle),
                 child: const Icon(
                   Icons.archive,
                   size: 20,
                 ),
               ),
               title: const Text(
-                "23",
+                "Archived",
                 style: TextStyle(color: Colors.grey),
               ),
             ),
             const Divider(
-              height: 1,
+              height: 1,color: Colors.transparent,
             ),
             Expanded(child: ListView.builder(itemCount: chat.users.length,itemBuilder: (context, index) {
               return Column(
                 children: [
                   ListTile(
+                    
                     leading: CircleAvatar(
                       radius: 24,
                       backgroundColor: Colors.green[700],
@@ -217,7 +218,7 @@ class _HomeViewState extends State<HomeView>
                       children: [
                         if (index < 2)
                           const Text(
-                            "tick",
+                            " ",
                             style: TextStyle(color: IColors.grey),
                           ),
                         Expanded(
@@ -248,7 +249,8 @@ class _HomeViewState extends State<HomeView>
 
                     
                   ),
-                  const Divider(height: 1, indent: 80),
+                
+                  const Divider(height: 1, indent: 80,color: Colors.transparent,),
                 ],
               );
             })),
@@ -278,23 +280,8 @@ class _HomeViewState extends State<HomeView>
   }
 
 
-   Widget _buildFilterChip(String label, {bool isSelected = false, bool isGreen = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected 
-            ? (isGreen ? const Color(0xFF00A884) : Colors.grey[700]) 
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.grey,
-        ),
-      ),
-    );
-  }
+   
+  
 
   Widget _buildNavItem(IconData icon, String label, bool isActive, {bool hasNotification = false, bool hasUpdateDot = false}) {
     return Column(
@@ -321,7 +308,7 @@ class _HomeViewState extends State<HomeView>
                     minHeight: 14,
                   ),
                   child: const Text(
-                    "99+",
+                    "39",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 8,
@@ -334,13 +321,15 @@ class _HomeViewState extends State<HomeView>
               Positioned(
                 right: 0,
                 top: 0,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF00A884),
-                    shape: BoxShape.circle,
-                  ),
+                child: Stack(children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF00A884),
+                      shape: BoxShape.circle,
+                    ),
+                  ),]
                 ),
               ),
           ],
@@ -374,6 +363,7 @@ class _HomeViewState extends State<HomeView>
         data,
         style: TextStyle(color: isSelected ? IColors.lightGreen : IColors.grey),
       ),
+
     );
 
   }
